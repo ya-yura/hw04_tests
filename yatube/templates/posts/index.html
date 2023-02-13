@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<title>
+  {% block title %}Последние обновления на сайте{% endblock %}
+</title>
+  <h1>Это главная страница проекта Yatube</h1>
+    <hr>
+    {% for post in page_obj %}
+      {% include 'posts/includes/article.html' with show_group=True %}
+      <br>
+    {% empty %}
+      <p>Нет Постов</p>
+    {% endfor %}
+  {% include 'posts/includes/paginator.html' %}
+{% endblock %}
