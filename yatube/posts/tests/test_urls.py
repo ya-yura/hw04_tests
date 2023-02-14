@@ -32,23 +32,26 @@ class PostURLTests(TestCase):
             (
                 'posts:group_list',
                 (self.group.slug,),
-                (reverse('posts:group_list') + self.group.slug),
+                reverse('posts:group_list', kwargs={
+                        'slug': self.group.slug}),
             ),
             (
                 'posts:profile',
                 (self.user,),
-                (reverse('posts:profile') + self.user),
+                reverse('posts:profile', kwargs={
+                        'username': self.user}),
             ),
             (
                 'posts:post_detail',
                 (self.post.id,),
-                (reverse('posts:post_detail') + self.post.id),
+                reverse('posts:post_detail', kwargs={
+                        'post_id': self.post.id}),
             ),
             (
                 'posts:post_edit',
                 (self.post.id,),
-                reverse('posts:post_edit', args=(self.post.id,)
-                        ),
+                reverse('posts:post_edit', kwargs={
+                    'post_id': self.post.id}),
             ),
             ('posts:post_create', None, reverse('posts:post_create')),
         )
@@ -68,6 +71,7 @@ class PostURLTests(TestCase):
             ('posts:post_edit', (self.post.id,), 'posts/create_post.html'),
             ('posts:post_create', None, 'posts/create_post.html'),
         )
+
         for name, args, template in templates:
             with self.subTest(name=name):
                 response = self.author_client.get(reverse(name, args=args))
@@ -92,15 +96,20 @@ class PostURLTests(TestCase):
             with self.subTest(url=url):
                 if name == 'post_edit':
                     response = self.authorized_client.get(
-                        reverse('posts:post_edit', args=(self.post.id,)
-                                ))
+                        reverse(
+                            'posts:post_edit',
+                            args=(self.post.id,),
+                        )
+                    )
                     self.assertRedirects(response, reverse(
                         'posts:post_detail',
                         args=(self.post.id,),
                     ))
+
                     response = self.authorized_client.get(reverse(
                         name, args=args
                     ))
+
                     self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_all_url_available_guest(self):
@@ -112,9 +121,8 @@ class PostURLTests(TestCase):
                 with self.subTest(url=url):
                     response = self.client.get(
                         reverse('posts:post_create'),
-                        reverse('posts:post_edit',
-                                args=(self.post.id,)
-                                ),
+                        reverse('posts:post_edit', kwargs={
+                                'post_id': self.post.id}),
                     )
                     self.assertRedirects(
                         response,
