@@ -32,25 +32,25 @@ class PostURLTests(TestCase):
             (
                 'posts:group_list',
                 (self.group.slug,),
-                reverse('posts:group_list') + self.group.slug,
+                (reverse('posts:group_list') + self.group.slug),
             ),
             (
                 'posts:profile',
                 (self.user,),
-                reverse('posts:profile') + self.user,
+                (reverse('posts:profile') + self.user),
             ),
             (
                 'posts:post_detail',
                 (self.post.id,),
-                reverse('posts:post_detail') + self.post.id,
+                (reverse('posts:post_detail') + self.post.id),
             ),
             (
                 'posts:post_edit',
                 (self.post.id,),
-                reverse('posts:post_edit', args=(self.post.id)
+                reverse('posts:post_edit', args=(self.post.id,)
                         ),
             ),
-            ('posts:post_create', None, '/create/'),
+            ('posts:post_create', None, reverse('posts:post_create')),
         )
 
     def test_unexisting_page_has_not_found(self):
@@ -92,11 +92,8 @@ class PostURLTests(TestCase):
             with self.subTest(url=url):
                 if name == 'post_edit':
                     response = self.authorized_client.get(
-                        reverse(
-                            'posts:post_edit',
-                            args=(self.post.id,),
-                        )
-                    )
+                        reverse('posts:post_edit', args=(self.post.id,)
+                                ))
                     self.assertRedirects(response, reverse(
                         'posts:post_detail',
                         args=(self.post.id,),
@@ -116,7 +113,7 @@ class PostURLTests(TestCase):
                     response = self.client.get(
                         reverse('posts:post_create'),
                         reverse('posts:post_edit',
-                                args=(self.post.id)
+                                args=(self.post.id,)
                                 ),
                     )
                     self.assertRedirects(
