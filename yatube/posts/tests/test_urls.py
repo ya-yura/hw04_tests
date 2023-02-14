@@ -32,22 +32,24 @@ class PostURLTests(TestCase):
             (
                 'posts:group_list',
                 (self.group.slug,),
-                f'/group/{self.group.slug}/',
+                reverse('posts:group_list') + self.group.slug,
             ),
             (
                 'posts:profile',
                 (self.user,),
-                f'/profile/{self.user}/',
+                reverse('posts:profile') + self.user,
             ),
             (
                 'posts:post_detail',
                 (self.post.id,),
-                f'/posts/{self.post.id}/',
+                reverse('posts:post_detail') + self.post.id,
             ),
             (
                 'posts:post_edit',
                 (self.post.id,),
-                f'/posts/{self.post.id}/edit/',
+                reverse('posts:post_edit', args={
+                        self.post.id}
+                        ),
             ),
             ('posts:post_create', None, '/create/'),
         )
@@ -113,8 +115,10 @@ class PostURLTests(TestCase):
             if name == ['post_create', 'post_edit']:
                 with self.subTest(url=url):
                     response = self.client.get(
-                        '/create/',
-                        f'/posts/{self.post.id}/edit/',
+                        reverse('posts:post_create'),
+                        reverse('posts:post_edit', args={
+                            self.post.id}
+                        ),
                     )
                     self.assertRedirects(
                         response,
