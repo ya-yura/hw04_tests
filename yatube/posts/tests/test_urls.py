@@ -47,8 +47,7 @@ class PostURLTests(TestCase):
             (
                 'posts:post_edit',
                 (self.post.id,),
-                reverse('posts:post_edit', args={
-                        self.post.id}
+                reverse('posts:post_edit', args=(self.post.id)
                         ),
             ),
             ('posts:post_create', None, '/create/'),
@@ -116,9 +115,9 @@ class PostURLTests(TestCase):
                 with self.subTest(url=url):
                     response = self.client.get(
                         reverse('posts:post_create'),
-                        reverse('posts:post_edit', args={
-                            self.post.id}
-                        ),
+                        reverse('posts:post_edit',
+                                args=(self.post.id)
+                                ),
                     )
                     self.assertRedirects(
                         response,
